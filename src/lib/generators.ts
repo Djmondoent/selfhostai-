@@ -53,7 +53,7 @@ export function normalizeProjectInput(input: Partial<ProjectInput>): ProjectInpu
     startCommand: input.startCommand || defaults.start,
     environmentVariables:
       input.environmentVariables ||
-      "NODE_ENV=production\nDATABASE_URL=postgresql://user:password@host:5432/app\nNEXTAUTH_SECRET=replace-me"
+      "NODE_ENV=production\nDATABASE_URL=postgresql://user:password@host:5432/app\nAPP_URL=https://app.example.com"
   };
 }
 

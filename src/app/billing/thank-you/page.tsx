@@ -36,6 +36,13 @@ export default async function BillingThankYouPage({
               <p className="font-medium text-foreground">{plan?.name || "Purchase"}</p>
               <p className="mt-2">Email: {purchase?.customerEmail || "Captured by Stripe"}</p>
               <p className="mt-1">Session: {purchase?.sessionId || sessionId}</p>
+              {purchase?.receiptUrl ? (
+                <p className="mt-3">
+                  <a className="text-primary hover:underline" href={purchase.receiptUrl} rel="noreferrer" target="_blank">
+                    Open Stripe receipt
+                  </a>
+                </p>
+              ) : null}
             </div>
             <Link href="/dashboard" className={buttonVariants()}>
               Open dashboard

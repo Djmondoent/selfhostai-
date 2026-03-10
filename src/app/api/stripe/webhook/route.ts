@@ -1,7 +1,7 @@
 import { headers } from "next/headers";
 import { NextResponse } from "next/server";
 
-import { recordCheckoutPurchase } from "@/lib/data-store";
+import { processCheckoutSessionCompleted } from "@/lib/stripe-fulfillment";
 import { getStripe } from "@/lib/stripe";
 
 export async function POST(request: Request) {
@@ -22,7 +22,11 @@ export async function POST(request: Request) {
       event.type === "checkout.session.completed" ||
       event.type === "checkout.session.async_payment_succeeded"
     ) {
-      await recordCheckoutPurchase(event.data.object, event.id);
+      await processCheckoutSessionCompleted(event.data.object, {
+        eventId: event.id,
+        eventType: event.type,
+        source: "stripe"
+      });
     }
 
     return NextResponse.json({ received: true });

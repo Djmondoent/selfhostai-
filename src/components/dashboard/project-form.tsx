@@ -23,7 +23,7 @@ const initialState: ProjectInput = {
   repoUrl: "",
   buildCommand: "npm run build",
   startCommand: "npm run start",
-  environmentVariables: "DATABASE_URL=postgresql://user:password@host:5432/app\nNEXTAUTH_SECRET=replace-me"
+  environmentVariables: "DATABASE_URL=postgresql://user:password@host:5432/app\nAPP_URL=https://app.example.com"
 };
 
 export function ProjectForm() {

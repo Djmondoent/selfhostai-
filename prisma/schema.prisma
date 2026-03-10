@@ -21,3 +21,61 @@ model Project {
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 }
+
+model Purchase {
+  id            String   @id @default(cuid())
+  sessionId     String   @unique
+  planKey       String
+  customerEmail String?
+  customerName  String?
+  amountTotal   Int?
+  currency      String?
+  paymentStatus String
+  fulfilled     Boolean  @default(false)
+  supportTier   Boolean  @default(false)
+  receiptUrl    String?
+  createdAt     DateTime @default(now())
+  fulfilledAt   DateTime?
+  updatedAt     DateTime @updatedAt
+
+  supportIntakes SupportIntake[]
+}
+
+model SupportIntake {
+  id             String   @id @default(cuid())
+  purchaseId     String
+  sessionId      String
+  planKey        String
+  customerEmail  String?
+  contactName    String
+  projectName    String
+  projectSize    String
+  repoUrl        String
+  stack          String
+  issueSummary   String   @db.Text
+  desiredOutcome String   @db.Text
+  status         String   @default("new")
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  purchase Purchase @relation(fields: [purchaseId], references: [id], onDelete: Cascade)
+
+  @@index([status])
+}
+
+model WebhookEvent {
+  id            String   @id @default(cuid())
+  stripeEventId String   @unique
+  eventType     String
+  objectId      String?
+  payload       Json
+  status        String   @default("pending")
+  source        String   @default("stripe")
+  attemptCount  Int      @default(0)
+  lastError     String?  @db.Text
+  processedAt   DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([status])
+}

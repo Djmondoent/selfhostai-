@@ -3,13 +3,14 @@ import { randomUUID } from "node:crypto";
 import { NextResponse } from "next/server";
 
 import { getBaseUrl } from "@/lib/billing";
-import { createSupportIntake, getPurchaseBySessionId } from "@/lib/data-store";
+import type { BillingPlanKey } from "@/lib/billing";
+import { createSupportIntake, getPurchaseForSupportIntake } from "@/lib/data-store";
 
 export async function POST(request: Request) {
   const formData = await request.formData();
   const sessionId = String(formData.get("sessionId") || "");
 
-  const purchase = await getPurchaseBySessionId(sessionId);
+  const purchase = await getPurchaseForSupportIntake(sessionId);
 
   if (!purchase || !purchase.fulfilled) {
     return NextResponse.redirect(new URL("/pricing?error=invalid-support-intake", getBaseUrl()), 303);
@@ -17,8 +18,9 @@ export async function POST(request: Request) {
 
   await createSupportIntake({
     id: randomUUID(),
+    purchaseId: purchase.id,
     sessionId,
-    planKey: purchase.planKey,
+    planKey: purchase.planKey as BillingPlanKey,
     customerEmail: purchase.customerEmail,
     contactName: String(formData.get("contactName") || ""),
     projectName: String(formData.get("projectName") || ""),

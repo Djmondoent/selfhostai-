@@ -9,6 +9,7 @@ It includes:
 - Mock data and beginner-friendly copy throughout
 - Prisma setup for PostgreSQL
 - Stripe Checkout billing with a $5.99 base access plan plus project-size help tiers
+- Database-backed purchase, support intake, and webhook event storage via Prisma
 - Deployment artifacts for PM2, Nginx, and Certbot
 
 ## Stack
@@ -33,36 +34,42 @@ npm install
 2. Copy the environment example:
 
 ```bash
-cp .env.example .env.local
+cp .env.example .env
 ```
 
-3. Generate the Prisma client:
+3. Set a real `DATABASE_URL` in `.env`.
+
+You can use local Postgres, Neon, Supabase, or any managed PostgreSQL provider.
+
+4. Generate the Prisma client and push the schema:
 
 ```bash
 npm run prisma:generate
+npm run db:push
 ```
 
-4. Add the billing environment variables to `.env.local`:
+5. Add the billing environment variables to `.env`:
 
 ```bash
 APP_URL=http://localhost:3000
 ACCESS_COOKIE_SECRET=replace-with-a-long-random-secret
 STRIPE_SECRET_KEY=replace-with-your-stripe-secret-or-restricted-key
+ADMIN_ACCESS_TOKEN=replace-with-an-admin-login-token
 ```
 
-5. Seed the Stripe products and prices:
+6. Seed the Stripe products and prices:
 
 ```bash
 npm run stripe:seed
 ```
 
-6. Create the Stripe webhook endpoint and save the returned signing secret into `.env.local` as `STRIPE_WEBHOOK_SECRET`:
+7. Create the Stripe webhook endpoint and save the returned signing secret into `.env` as `STRIPE_WEBHOOK_SECRET`:
 
 ```bash
 npm run stripe:webhook
 ```
 
-7. Start the app:
+8. Start the app:
 
 ```bash
 npm run dev
@@ -73,6 +80,12 @@ Open `http://localhost:3000`.
 ## Database
 
 This MVP ships with a starter Prisma schema in [prisma/schema.prisma](/var/www/selfhostai/prisma/schema.prisma). It is configured for PostgreSQL so you can point it at Neon, Supabase, or any other Postgres instance with `DATABASE_URL`.
+
+Billing-related data stored in Postgres:
+
+- fulfilled Stripe purchases
+- support intake submissions and admin status updates
+- webhook processing history, failure reasons, and retry attempts
 
 Useful commands:
 
@@ -104,7 +117,8 @@ npm run db:push
 ## Notes
 
 - The dashboard uses mock project data right now.
-- Paid access is currently enforced with a signed cookie after successful Stripe Checkout completion.
-- Access is only granted after the Stripe webhook records a fulfilled purchase on the server.
+- Paid access is enforced with a signed cookie only after a fulfilled Stripe purchase exists in the database.
+- Stripe webhook events are stored with status, attempt counts, and error details for admin retries.
+- Support-tier customers can submit a project intake after checkout, and admins can move that intake through `new`, `in_progress`, and `completed`.
 - The Nginx and deployment guide tools are production-shaped generators, not live infrastructure automation.
 - DNS is assumed to already point at the correct VPS.

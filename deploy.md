@@ -30,6 +30,7 @@ cd /var/www/selfhostai
 ```bash
 npm install
 npm run prisma:generate
+npm run db:push
 npm run stripe:seed
 npm run stripe:webhook
 npm run build
@@ -42,7 +43,7 @@ cp .env.example .env
 nano .env
 ```
 
-Set a real `DATABASE_URL`, `NEXTAUTH_SECRET`, and any other secrets you add later.
+Set a real `DATABASE_URL` and the other production secrets you need.
 Also set:
 
 ```bash
@@ -52,6 +53,12 @@ STRIPE_SECRET_KEY=<your-stripe-secret-or-restricted-key>
 STRIPE_WEBHOOK_SECRET=<webhook-signing-secret-from-stripe:webhook>
 ADMIN_ACCESS_TOKEN=<admin-login-token>
 ```
+
+The billing system now depends on PostgreSQL for:
+
+- purchase fulfillment records
+- support intake submissions and status changes
+- webhook event logs and retry state
 
 ## 5. Start with PM2
 
@@ -90,3 +97,10 @@ pm2 logs selfhostai
 sudo systemctl status nginx
 curl http://127.0.0.1:3000
 ```
+
+## 9. Admin workflow
+
+1. Visit `/admin/login` and sign in with `ADMIN_ACCESS_TOKEN`.
+2. Review fulfilled purchases and Stripe receipt links.
+3. Move support intake records from `new` to `in_progress` or `completed`.
+4. Retry failed webhook events directly from the admin screen after you fix the underlying Stripe or env issue.

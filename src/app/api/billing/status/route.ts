@@ -23,6 +23,7 @@ export async function GET(request: Request) {
     status: purchase.fulfilled ? "fulfilled" : "pending",
     planName: plan?.name,
     customerEmail: purchase.customerEmail,
-    supportTier: purchase.supportTier
+    supportTier: purchase.supportTier,
+    receiptUrl: purchase.receiptUrl ?? null
   });
 }
