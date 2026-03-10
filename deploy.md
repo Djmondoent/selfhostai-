@@ -53,11 +53,13 @@ pm2 startup
 ## 6. Configure Nginx
 
 ```bash
-sudo cp infra/nginx/selfhostai.xyz.conf /etc/nginx/sites-available/selfhostai.xyz.conf
+sudo cp infra/nginx/selfhostai.xyz.bootstrap.conf /etc/nginx/sites-available/selfhostai.xyz.conf
 sudo ln -sf /etc/nginx/sites-available/selfhostai.xyz.conf /etc/nginx/sites-enabled/selfhostai.xyz.conf
 sudo nginx -t
 sudo systemctl reload nginx
 ```
+
+This first config is HTTP-only on purpose. Certbot will add the HTTPS block after it verifies the domain.
 
 ## 7. Enable SSL with Certbot
 
@@ -66,6 +68,8 @@ sudo apt install -y certbot python3-certbot-nginx
 sudo certbot --nginx -d selfhostai.xyz -d www.selfhostai.xyz
 sudo certbot renew --dry-run
 ```
+
+After Certbot succeeds, you can compare the live Nginx file to [infra/nginx/selfhostai.xyz.conf](/var/www/selfhostai/infra/nginx/selfhostai.xyz.conf), which is the post-SSL reference version.
 
 ## 8. Useful checks
 
