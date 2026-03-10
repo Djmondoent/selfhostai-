@@ -1,0 +1,65 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 220 22% 7%;
+    --foreground: 210 40% 98%;
+    --card: 222 22% 10%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222 22% 10%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 158 76% 54%;
+    --primary-foreground: 222 47% 11%;
+    --secondary: 220 14% 16%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 220 10% 20%;
+    --muted-foreground: 215 20% 71%;
+    --accent: 200 100% 55%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 220 13% 18%;
+    --input: 220 13% 18%;
+    --ring: 158 76% 54%;
+    --radius: 1.35rem;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: "Space Grotesk", "Avenir Next", "Segoe UI", sans-serif;
+    background-image:
+      radial-gradient(circle at top left, rgba(57, 211, 173, 0.18), transparent 28%),
+      radial-gradient(circle at top right, rgba(59, 130, 246, 0.14), transparent 22%),
+      linear-gradient(180deg, rgba(255, 255, 255, 0.02), transparent 25%);
+  }
+
+  code,
+  pre,
+  .font-mono {
+    font-family: "IBM Plex Mono", "SFMono-Regular", monospace;
+  }
+
+  a {
+    @apply transition-colors;
+  }
+
+  ::selection {
+    background: rgba(57, 211, 173, 0.35);
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
