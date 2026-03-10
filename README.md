@@ -5,9 +5,10 @@ SelfHostAI is a polished Next.js 14 MVP for helping non-technical users self-hos
 It includes:
 
 - A premium landing page for `selfhostai.xyz`
-- A dashboard with project intake, deployment summary, hosting guides, checklist, Nginx generator, SSL guide, and troubleshooting
+- A paywalled dashboard with project intake, deployment summary, hosting guides, checklist, Nginx generator, SSL guide, and troubleshooting
 - Mock data and beginner-friendly copy throughout
 - Prisma setup for PostgreSQL
+- Stripe Checkout billing with a $5.99 base access plan plus project-size help tiers
 - Deployment artifacts for PM2, Nginx, and Certbot
 
 ## Stack
@@ -17,6 +18,7 @@ It includes:
 - Tailwind CSS
 - `shadcn/ui`-style components
 - Lucide icons
+- Stripe
 - Prisma ORM
 - PostgreSQL-ready configuration
 
@@ -40,7 +42,21 @@ cp .env.example .env.local
 npm run prisma:generate
 ```
 
-4. Start the app:
+4. Add the billing environment variables to `.env.local`:
+
+```bash
+APP_URL=http://localhost:3000
+ACCESS_COOKIE_SECRET=replace-with-a-long-random-secret
+STRIPE_SECRET_KEY=replace-with-your-stripe-secret-or-restricted-key
+```
+
+5. Seed the Stripe products and prices:
+
+```bash
+npm run stripe:seed
+```
+
+6. Start the app:
 
 ```bash
 npm run dev
@@ -64,7 +80,10 @@ npm run db:push
 - `src/app`: App Router pages and API routes
 - `src/components`: reusable UI, dashboard, and marketing components
 - `src/lib`: generators, utilities, mock data, Prisma helper
+- `src/lib/billing.ts`: commercial plan catalog and Stripe lookup keys
+- `src/lib/access.ts`: signed cookie paywall logic
 - `src/types`: shared project types
+- `scripts/setup-stripe-products.mjs`: creates the Stripe products and prices
 - `prisma`: Prisma schema
 - `infra`: sample Nginx and SSL deployment artifacts
 
@@ -78,5 +97,6 @@ npm run db:push
 ## Notes
 
 - The dashboard uses mock project data right now.
+- Paid access is currently enforced with a signed cookie after successful Stripe Checkout completion.
 - The Nginx and deployment guide tools are production-shaped generators, not live infrastructure automation.
 - DNS is assumed to already point at the correct VPS.

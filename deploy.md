@@ -30,6 +30,7 @@ cd /var/www/selfhostai
 ```bash
 npm install
 npm run prisma:generate
+npm run stripe:seed
 npm run build
 ```
 
@@ -41,6 +42,13 @@ nano .env
 ```
 
 Set a real `DATABASE_URL`, `NEXTAUTH_SECRET`, and any other secrets you add later.
+Also set:
+
+```bash
+APP_URL=https://selfhostai.xyz
+ACCESS_COOKIE_SECRET=<long-random-secret>
+STRIPE_SECRET_KEY=<your-stripe-secret-or-restricted-key>
+```
 
 ## 5. Start with PM2
 
