@@ -1,12 +1,15 @@
+import { cookies } from "next/headers";
 import Link from "next/link";
 import { ArrowRight, CheckCircle2, ChevronRight, Shield, Sparkles, TerminalSquare } from "lucide-react";
 
+import { PricingGrid } from "@/components/billing/pricing-grid";
 import { SectionHeading } from "@/components/marketing/section-heading";
 import { SiteFooter } from "@/components/marketing/site-footer";
 import { SiteHeader } from "@/components/marketing/site-header";
 import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { getAccessCookieName, hasPaidAccess } from "@/lib/access";
 import {
   faqs,
   heroStats,
@@ -17,6 +20,9 @@ import {
 } from "@/lib/mock-data";
 
 export default function HomePage() {
+  const cookieStore = cookies();
+  const hasAccess = hasPaidAccess(cookieStore.get(getAccessCookieName())?.value);
+
   return (
     <div className="relative overflow-hidden">
       <SiteHeader />
@@ -39,14 +45,14 @@ export default function HomePage() {
                 </p>
               </div>
               <div className="flex flex-wrap gap-4">
-                <Link href="/dashboard/new-project" className={buttonVariants({ size: "lg" })}>
-                  Get Started
+                <Link href={hasAccess ? "/dashboard/new-project" : "/pricing"} className={buttonVariants({ size: "lg" })}>
+                  {hasAccess ? "Open Dashboard" : "Unlock Access"}
                   <ArrowRight className="h-4 w-4" />
                 </Link>
-                <Link href="/dashboard/hosting-guides" className={buttonVariants({ variant: "secondary", size: "lg" })}>
+                <Link href={hasAccess ? "/dashboard/hosting-guides" : "/pricing"} className={buttonVariants({ variant: "secondary", size: "lg" })}>
                   Generate Hosting Guide
                 </Link>
-                <Link href="/dashboard/nginx-config" className={buttonVariants({ variant: "outline", size: "lg" })}>
+                <Link href={hasAccess ? "/dashboard/nginx-config" : "/pricing"} className={buttonVariants({ variant: "outline", size: "lg" })}>
                   Deploy My App
                 </Link>
               </div>
@@ -191,30 +197,29 @@ export default function HomePage() {
         <section id="pricing" className="mx-auto max-w-7xl px-6 py-20 lg:px-8">
           <SectionHeading
             eyebrow="Pricing"
-            title="Start free, then grow into saved deployments and automation."
-            description="Pricing is a placeholder for this MVP, but the structure is ready for future subscription logic."
+            title="Pay once to unlock SelfHostAI, then choose bigger help when the project gets bigger."
+            description="The base toolkit is $5.99. Support tiers scale up when the codebase is too large or too messy for a pure DIY deployment."
           />
-          <div className="mt-12 grid gap-6 lg:grid-cols-2">
+          <div className="mt-8 grid gap-4 lg:grid-cols-2">
             {pricingTiers.map((tier) => (
-              <Card key={tier.name} className={tier.highlight ? "border-primary/20 bg-primary/8" : ""}>
+              <Card key={tier.name} className={tier.highlight ? "border-primary/20 bg-primary/10" : ""}>
                 <CardHeader>
-                  <div className="flex items-center justify-between gap-4">
-                    <CardTitle>{tier.name}</CardTitle>
-                    {tier.highlight ? <Badge>Popular later</Badge> : null}
-                  </div>
+                  <CardTitle>{tier.name}</CardTitle>
                   <div className="text-4xl font-semibold">{tier.price}</div>
                   <CardDescription>{tier.description}</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-3">
                   {tier.features.map((feature) => (
-                    <div key={feature} className="flex items-start gap-3 rounded-2xl border border-white/8 bg-black/20 p-4">
-                      <CheckCircle2 className="mt-1 h-4 w-4 text-primary" />
-                      <span className="text-sm leading-6 text-muted-foreground">{feature}</span>
+                    <div key={feature} className="rounded-2xl border border-white/8 bg-black/20 p-4 text-sm leading-6 text-muted-foreground">
+                      {feature}
                     </div>
                   ))}
                 </CardContent>
               </Card>
             ))}
+          </div>
+          <div className="mt-12">
+            <PricingGrid hasAccess={hasAccess} />
           </div>
         </section>
 

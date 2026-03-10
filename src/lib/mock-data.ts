@@ -88,23 +88,23 @@ export const supportedApps = [
 
 export const pricingTiers = [
   {
-    name: "Starter",
-    price: "$0",
-    description: "Preview the workflow and generate a deployment brief for one project.",
+    name: "SelfHostAI Access",
+    price: "$5.99",
+    description: "One-time paywall unlock for the dashboard, generators, and deployment toolkit.",
     features: [
-      "Landing page and dashboard access",
-      "Deployment summary preview",
-      "Static Nginx and SSL examples"
+      "Unlock the deployment workspace",
+      "Generate project summaries and guides",
+      "Copy-ready Nginx, SSL, and troubleshooting tools"
     ]
   },
   {
-    name: "Pro",
-    price: "$19/mo",
-    description: "Placeholder pricing for future automation and saved guides.",
+    name: "Project Help Tiers",
+    price: "$29-$149",
+    description: "Support packages scaled by project size when self-serve access is not enough.",
     features: [
-      "Saved projects and reusable server templates",
-      "One-click copy blocks for commands",
-      "Priority troubleshooting library"
+      "Small project help for simple apps",
+      "Growth project help for full-stack deployments",
+      "Rescue help for inherited or messy codebases"
     ],
     highlight: true
   }

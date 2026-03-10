@@ -10,6 +10,9 @@ export function SiteFooter() {
           <p>Built for beginner-friendly VPS deployments on Ubuntu, Nginx, and PM2.</p>
         </div>
         <div className="flex flex-wrap gap-6">
+          <Link href="/pricing" className="hover:text-foreground">
+            Pricing
+          </Link>
           <Link href="/dashboard" className="hover:text-foreground">
             Dashboard
           </Link>

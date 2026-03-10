@@ -1,6 +1,8 @@
 import Link from "next/link";
+import { cookies } from "next/headers";
 
 import { buttonVariants } from "@/components/ui/button";
+import { getAccessCookieName, hasPaidAccess } from "@/lib/access";
 import { cn } from "@/lib/utils";
 
 const navItems = [
@@ -11,6 +13,9 @@ const navItems = [
 ];
 
 export function SiteHeader() {
+  const cookieStore = cookies();
+  const hasAccess = hasPaidAccess(cookieStore.get(getAccessCookieName())?.value);
+
   return (
     <header className="sticky top-0 z-30 border-b border-white/8 bg-background/75 backdrop-blur-xl">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 lg:px-8">
@@ -31,11 +36,11 @@ export function SiteHeader() {
           ))}
         </nav>
         <div className="flex items-center gap-3">
-          <Link href="/dashboard" className={cn(buttonVariants({ variant: "ghost" }), "hidden sm:inline-flex")}>
+          <Link href={hasAccess ? "/dashboard" : "/pricing"} className={cn(buttonVariants({ variant: "ghost" }), "hidden sm:inline-flex")}>
             Dashboard
           </Link>
-          <Link href="/dashboard/new-project" className={buttonVariants()}>
-            Get Started
+          <Link href={hasAccess ? "/dashboard/new-project" : "/pricing"} className={buttonVariants()}>
+            {hasAccess ? "Open App" : "Unlock Access"}
           </Link>
         </div>
       </div>
