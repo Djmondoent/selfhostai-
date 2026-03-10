@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
 
 import { encodeAccessGrant, getAccessCookieName } from "@/lib/access";
-import { getBaseUrl, getBillingPlan } from "@/lib/billing";
-import { getStripe } from "@/lib/stripe";
+import { getBaseUrl } from "@/lib/billing";
+import { getPurchaseBySessionId } from "@/lib/data-store";
 
 export async function GET(request: Request) {
   const url = new URL(request.url);
@@ -12,23 +12,20 @@ export async function GET(request: Request) {
     return NextResponse.redirect(new URL("/pricing?error=missing-session", getBaseUrl()), 303);
   }
 
-  const stripe = getStripe();
-  const session = await stripe.checkout.sessions.retrieve(sessionId);
-  const planKey = session.metadata?.planKey || "";
-  const plan = getBillingPlan(planKey);
+  const purchase = await getPurchaseBySessionId(sessionId);
 
-  if (!plan || session.payment_status !== "paid") {
-    return NextResponse.redirect(new URL("/pricing?error=payment-not-complete", getBaseUrl()), 303);
+  if (!purchase || !purchase.fulfilled) {
+    return NextResponse.redirect(new URL(`/billing/success?session_id=${sessionId}`, getBaseUrl()), 303);
   }
 
-  const response = NextResponse.redirect(new URL(`/dashboard?welcome=${plan.key}`, getBaseUrl()), 303);
+  const response = NextResponse.redirect(new URL(`/billing/thank-you?session_id=${sessionId}`, getBaseUrl()), 303);
 
   response.cookies.set({
     name: getAccessCookieName(),
     value: encodeAccessGrant({
-      planKey: plan.key,
-      sessionId: session.id,
-      customerEmail: session.customer_details?.email ?? null,
+      planKey: purchase.planKey,
+      sessionId: purchase.sessionId,
+      customerEmail: purchase.customerEmail,
       issuedAt: Date.now()
     }),
     httpOnly: true,

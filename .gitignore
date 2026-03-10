@@ -8,3 +8,4 @@ coverage
 pnpm-lock.yaml
 yarn.lock
 .DS_Store
+data/

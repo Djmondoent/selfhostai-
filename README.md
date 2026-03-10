@@ -56,7 +56,13 @@ STRIPE_SECRET_KEY=replace-with-your-stripe-secret-or-restricted-key
 npm run stripe:seed
 ```
 
-6. Start the app:
+6. Create the Stripe webhook endpoint and save the returned signing secret into `.env.local` as `STRIPE_WEBHOOK_SECRET`:
+
+```bash
+npm run stripe:webhook
+```
+
+7. Start the app:
 
 ```bash
 npm run dev
@@ -84,6 +90,7 @@ npm run db:push
 - `src/lib/access.ts`: signed cookie paywall logic
 - `src/types`: shared project types
 - `scripts/setup-stripe-products.mjs`: creates the Stripe products and prices
+- `scripts/create-stripe-webhook.mjs`: creates the Stripe webhook endpoint for purchase fulfillment
 - `prisma`: Prisma schema
 - `infra`: sample Nginx and SSL deployment artifacts
 
@@ -98,5 +105,6 @@ npm run db:push
 
 - The dashboard uses mock project data right now.
 - Paid access is currently enforced with a signed cookie after successful Stripe Checkout completion.
+- Access is only granted after the Stripe webhook records a fulfilled purchase on the server.
 - The Nginx and deployment guide tools are production-shaped generators, not live infrastructure automation.
 - DNS is assumed to already point at the correct VPS.

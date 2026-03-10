@@ -31,6 +31,7 @@ cd /var/www/selfhostai
 npm install
 npm run prisma:generate
 npm run stripe:seed
+npm run stripe:webhook
 npm run build
 ```
 
@@ -48,6 +49,8 @@ Also set:
 APP_URL=https://selfhostai.xyz
 ACCESS_COOKIE_SECRET=<long-random-secret>
 STRIPE_SECRET_KEY=<your-stripe-secret-or-restricted-key>
+STRIPE_WEBHOOK_SECRET=<webhook-signing-secret-from-stripe:webhook>
+ADMIN_ACCESS_TOKEN=<admin-login-token>
 ```
 
 ## 5. Start with PM2
